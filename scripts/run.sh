@@ -18,7 +18,7 @@ test_nodes_not_ready()
 
     kubectl get nodes | grep -qP "(NotReady)"
 
-    return $?
+    test $? -eq 1
 }
 
 
@@ -30,7 +30,7 @@ test_kube_system_pods()
 
     kubectl get pods -n kube-system | grep -qP "(Error|ImagePullBackoff|PostStartHookError|PreStopHookError|InvalidImageName)"
 
-    return $?
+    test $? -eq 1
 }
 
 
