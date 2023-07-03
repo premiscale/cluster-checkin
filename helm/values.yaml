@@ -25,7 +25,9 @@ cron:
         annotations: {}
 
   # Specify additional environment variables. Must be a list of valid podspec env vars.
-  env: []
+  env:
+    - name: CLUSTER_ID
+      value: ""
 
   resources:
     requests:

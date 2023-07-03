@@ -169,6 +169,7 @@ deploy tags chart [HELM_ENV]:
         --namespace "$HELM_ENV" --create-namespace
         --set global.docker.registry="$DOCKER_REPO_URL"
         --set cron.image.tag=$CI_COMMIT_TAG
+        --set cron.env[0].value="$_CLUSTER"
         --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
         -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - export cluster="$_CLUSTER"
@@ -189,6 +190,7 @@ deploy branch chart [HELM_ENV]:
         --namespace "$HELM_ENV" --create-namespace
         --set global.docker.registry="$DOCKER_REPO_URL"
         --set cron.image.tag=$CI_COMMIT_REF_NAME
+        --set cron.env[0].value="$_CLUSTER"
         --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
         -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - helm upgrade --install cluster-cronitor helm-master/cluster-cronitor
