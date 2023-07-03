@@ -42,7 +42,7 @@ spec:
           {{- if gt (len .Values.cron.image.pullSecrets) 0 }}
             {{- range .Values.cron.image.pullSecrets }}
           imagePullSecrets:
-            - name: {{ toYaml .name }}
+            - name: {{ .name }}
             {{- end }}
           {{- end }}
           restartPolicy: Never
