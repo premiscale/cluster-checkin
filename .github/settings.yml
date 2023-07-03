@@ -1,0 +1,7 @@
+_extends: .github
+
+repository:
+  name: cluster-checkin
+  description: K8s cronjob that checks in cluster health to cronitor.io
+  homepage: https://github.com/premiscale/cluster-checkin
+  topics: cronitor, kubernetes, helm, cronjob
