@@ -125,9 +125,8 @@ helm-tags:
 dockerize-branch:
   extends: .docker-build
   interruptible: true
-  except:
-    - tags
-    - merge_requests
+  only:
+    - master
 
 helm-branch:
   extends: .helm-build
@@ -135,9 +134,8 @@ helm-branch:
     - dockerize-branch
   script:
     - build_publish_helm_chart helm-$CI_COMMIT_REF_NAME 0.0.$CI_PIPELINE_ID cluster-cronitor
-  except:
-    - merge_requests
-    - tags
+  only:
+    - master
 
 
 # feature branches
@@ -173,7 +171,6 @@ deploy tags chart [HELM_ENV]:
       --set cron.image.tag=$CI_COMMIT_TAG
       --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
       --set secret.imagePullSecret.value="${}"
-      -f ../helm-environments/environments/docker-clm/"$_CLUSTER".yaml
     - export cluster="$_CLUSTER"
     - export namespace="$HELM_ENV"
     - !reference [.set-namespace-project]
@@ -187,19 +184,18 @@ deploy branch chart [HELM_ENV]:
   script:
     - helm search repo helm-"$CI_COMMIT_REF_NAME"
     - echo "$_CLUSTER" | /home/kcc/rancher.sh
-    - helm upgrade --install cluster-cronitor helm-develop/cluster-cronitor
+    - helm upgrade --install cluster-cronitor helm-master/cluster-cronitor
       --version 0.0.$CI_PIPELINE_ID
       --namespace "$HELM_ENV" --create-namespace
-      --set image.repository="$DOCKER_REPO_URL"
-      --set image.tag=$CI_PIPELINE_ID
-      --set jts.hostname=${HELM_ENV}.sbe-devops.com
-      -f ../helm-environments/environments/docker-clm/"$_CLUSTER".yaml
+      --set global.image.repository="$DOCKER_REPO_URL"
+      --set cron.image.tag=$CI_COMMIT_TAG
+      --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
+      --set secret.imagePullSecret.value="${}"
     - export cluster="$_CLUSTER"
     - export namespace="$HELM_ENV"
     - !reference [.set-namespace-project]
-  except:
-    - merge_requests
-    - tags
+  only:
+    - master
 
 deploy mr chart [HELM_ENV]:
   extends: .deploy
@@ -209,9 +205,10 @@ deploy mr chart [HELM_ENV]:
     - helm upgrade --install cluster-cronitor helm-feature/cluster-cronitor
       --version 0.0.$CI_PIPELINE_ID
       --namespace "$HELM_ENV" --create-namespace
-      --set image.repository="$DOCKER_REPO_URL"
-      --set image.tag=$CI_PIPELINE_ID
-      --set jts.hostname=${HELM_ENV}.sbe-devops.com
+      --set global.image.repository="$DOCKER_REPO_URL"
+      --set cron.image.tag=$CI_COMMIT_TAG
+      --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
+      --set secret.imagePullSecret.value="${}"
     - export cluster="$_CLUSTER"
     - export namespace="$HELM_ENV"
     - !reference [.set-namespace-project]
