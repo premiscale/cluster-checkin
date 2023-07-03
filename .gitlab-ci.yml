@@ -89,7 +89,7 @@ helm-validate:
   stage: test
   before_script:
     - source /home/gkube_profile.sh
-    - echo mordor | /home/kcc/rancher.sh
+    - echo poc-one | /home/kcc/rancher.sh
   script:
     - helm install ./helm --debug --dry-run --generate-name
   tags:
