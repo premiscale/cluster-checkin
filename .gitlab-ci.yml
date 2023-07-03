@@ -165,12 +165,12 @@ deploy tags chart [HELM_ENV]:
     - helm search repo helm-tags
     - echo "$_CLUSTER" | /home/kcc/rancher.sh
     - helm upgrade --install cluster-cronitor helm-tags/cluster-cronitor
-      --version $CI_COMMIT_TAG
-      --namespace "$HELM_ENV" --create-namespace
-      --set global.docker.registry="$DOCKER_REPO_URL"
-      --set cron.image.tag=$CI_COMMIT_TAG
-      --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
-      -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
+        --version $CI_COMMIT_TAG
+        --namespace "$HELM_ENV" --create-namespace
+        --set global.docker.registry="$DOCKER_REPO_URL"
+        --set cron.image.tag=$CI_COMMIT_TAG
+        --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
+        -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - export cluster="$_CLUSTER"
     - export namespace="$HELM_ENV"
     - !reference [.set-namespace-project]
@@ -184,13 +184,20 @@ deploy branch chart [HELM_ENV]:
   script:
     - helm search repo helm-"$CI_COMMIT_REF_NAME"
     - echo "$_CLUSTER" | /home/kcc/rancher.sh
+    - helm template helm/
+        --version 0.0.$CI_PIPELINE_ID
+        --namespace "$HELM_ENV" --create-namespace
+        --set global.docker.registry="$DOCKER_REPO_URL"
+        --set cron.image.tag=$CI_COMMIT_REF_NAME
+        --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
+        -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - helm upgrade --install cluster-cronitor helm-master/cluster-cronitor
-      --version 0.0.$CI_PIPELINE_ID
-      --namespace "$HELM_ENV" --create-namespace
-      --set global.docker.registry="$DOCKER_REPO_URL"
-      --set cron.image.tag=$CI_COMMIT_REF_NAME
-      --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
-      -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
+        --version 0.0.$CI_PIPELINE_ID
+        --namespace "$HELM_ENV" --create-namespace
+        --set global.docker.registry="$DOCKER_REPO_URL"
+        --set cron.image.tag=$CI_COMMIT_REF_NAME
+        --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
+        -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - export cluster="$_CLUSTER"
     - export namespace="$HELM_ENV"
     - !reference [.set-namespace-project]
@@ -203,12 +210,12 @@ deploy mr chart [HELM_ENV]:
     - helm search repo helm-feature
     - echo "$_CLUSTER" | /home/kcc/rancher.sh
     - helm upgrade --install cluster-cronitor helm-feature/cluster-cronitor
-      --version 0.0.$CI_PIPELINE_ID
-      --namespace "$HELM_ENV" --create-namespace
-      --set global.docker.registry="$DOCKER_REPO_URL"
-      --set cron.image.tag=$CI_COMMIT_REF_NAME
-      --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
-      -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
+        --version 0.0.$CI_PIPELINE_ID
+        --namespace "$HELM_ENV" --create-namespace
+        --set global.docker.registry="$DOCKER_REPO_URL"
+        --set cron.image.tag=$CI_COMMIT_REF_NAME
+        --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
+        -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - export cluster="$_CLUSTER"
     - export namespace="$HELM_ENV"
     - !reference [.set-namespace-project]
