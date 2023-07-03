@@ -22,8 +22,8 @@ test_kube_system_pods()
 }
 
 
-(curl "https://cronitor.link/p/$_CRONITOR_TELEMETRY_KEY/$_CLUSTER_ID?state=run" && (
+(curl -s "https://cronitor.link/p/$_CRONITOR_TELEMETRY_KEY/$_CLUSTER_ID?state=run" && (
     test_nodes_not_ready && \
     test_kube_system_pods && \
-    curl "https://cronitor.link/p/$_CRONITOR_TELEMETRY_KEY/$_CLUSTER_ID?state=complete"
-)) || curl "https://cronitor.link/p/$_CRONITOR_TELEMETRY_KEY/$_CLUSTER_ID?state=fail"
+    curl -s "https://cronitor.link/p/$_CRONITOR_TELEMETRY_KEY/$_CLUSTER_ID?state=complete"
+)) || curl -s "https://cronitor.link/p/$_CRONITOR_TELEMETRY_KEY/$_CLUSTER_ID?state=fail"
