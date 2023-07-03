@@ -18,7 +18,7 @@ test_nodes_not_ready()
 # Test if any pods in kube-system are not up and running.
 test_kube_system_pods()
 {
-    kubectl get pods -n kube-system | grep -qP "(Error|ImagePullBackoff|PostStartHookError|PreStopHookError)"
+    kubectl get pods -n kube-system | grep -qP "(Error|ImagePullBackoff|PostStartHookError|PreStopHookError|InvalidImageName)"
 }
 
 
