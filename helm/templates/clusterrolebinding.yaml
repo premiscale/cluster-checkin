@@ -16,6 +16,7 @@ subjects:
   - kind: ServiceAccount
     name: {{ .Chart.Name }}
     apiGroup: ""
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ .Chart.Name }}
