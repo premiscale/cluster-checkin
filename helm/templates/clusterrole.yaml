@@ -17,14 +17,7 @@ rules:
       - ""
     resources:
       - nodes
-    verbs:
-      - get
-      - watch
-      - list
-  - apiGroups:
-      - ""
-    resources:
-      - pod
+      - pods
     verbs:
       - get
       - watch
