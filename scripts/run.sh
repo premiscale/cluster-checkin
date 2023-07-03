@@ -14,6 +14,8 @@ _CLUSTER_ID="${CLUSTER_ID:-rivendell}"
 # Fail if any nodes are not ready.
 test_nodes_not_ready()
 {
+    kubectl get nodes
+
     kubectl get nodes | grep -qP "(NotReady)"
 
     return $?
@@ -24,6 +26,8 @@ test_nodes_not_ready()
 # Test if any pods in kube-system are not up and running.
 test_kube_system_pods()
 {
+    kubectl get pods -n kube-system
+
     kubectl get pods -n kube-system | grep -qP "(Error|ImagePullBackoff|PostStartHookError|PreStopHookError|InvalidImageName)"
 
     return $?
