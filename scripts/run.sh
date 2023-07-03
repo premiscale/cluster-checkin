@@ -2,7 +2,7 @@
 # Wrap tests in the cronitor.io API.
 
 
-set -eo pipefail
+set -o pipefail
 shopt -s nullglob
 
 
