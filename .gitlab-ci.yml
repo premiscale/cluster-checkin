@@ -1,4 +1,0 @@
-include:
-  - project: sbevision/devops/gitlab-ci-templates
-    ref: master
-    file: /cluster-cronitor.gitlab-ci.yml
