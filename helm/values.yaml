@@ -2,17 +2,13 @@ global:
   storageclass: longhorn
   docker:
     registry: docker-ci.ops.sbe-vision.com
+    secretType: dockerconfigjson
 
 secret:
   cronitor:
     name: cronitor
     key: CRONITOR_TELEMETRY_KEY
     type: Opaque
-    value: ""
-  imagePullSecret:
-    name: nexus-docker-registry
-    key: .dockerconfigjson
-    type: .dockerconfigjson
     value: ""
 
 cron:
@@ -24,6 +20,9 @@ cron:
     tag: 1.0.0
     pullSecrets:
       - name: nexus-docker-registry
+        value: ""
+        labels: {}
+        annotations: {}
 
   # Specify additional environment variables. Must be a list of valid podspec env vars.
   env: []

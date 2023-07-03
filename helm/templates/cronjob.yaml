@@ -39,8 +39,10 @@ spec:
               {{- if .Values.cron.env }}
                 {{- toYaml .Values.cron.env | nindent 16 }}
               {{- end }}
-          {{- with .Values.cron.image.pullSecrets }}
+          {{- if gt (len .Values.cron.image.pullSecrets) 0 }}
+            {{- range .Values.cron.image.pullSecrets }}
           imagePullSecrets:
-            {{ toYaml . }}
+            - name: {{ toYaml .name }}
+            {{- end }}
           {{- end }}
           restartPolicy: OnFailure
