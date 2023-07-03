@@ -45,4 +45,4 @@ spec:
             - name: {{ toYaml .name }}
             {{- end }}
           {{- end }}
-          restartPolicy: OnFailure
+          restartPolicy: Never
