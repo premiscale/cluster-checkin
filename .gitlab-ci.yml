@@ -1,0 +1,218 @@
+include:
+  - project: sbevision/devops/gitlab-ci-templates
+    ref: master
+    file: /utils/utils.gitlab-ci.yml
+  - project: sbevision/devops/gitlab-ci-templates
+    ref: master
+    file: /utils/shellcheck.gitlab-ci.yml
+
+
+stages:
+  - test
+  - build
+  - deploy
+
+
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+
+
+## templates
+
+
+.environment-setup: &environment-setup
+  - git clone -b develop --depth 1 https://gitlab-ci-token:${CI_JOB_TOKEN}@git.ops.sbe-vision.com/sbevision/devops/helm-environments.git
+
+.helm-setup: &helm-setup
+  - source /home/gkube_profile.sh
+  - add_helm_repo helm-feature
+  - add_helm_repo helm-develop
+  - add_helm_repo helm-master
+  - add_helm_repo helm-tags
+  - helm repo update
+
+.debug: &debug
+  - |+
+    printf "HELM_ENV:\t\"%s\"\\n" "$HELM_ENV"
+
+.deploy:
+  image: ${GKUBE_SERVICE}
+  stage: deploy
+  before_script:
+    - *environment-setup
+    - *helm-setup
+    - *debug
+    - source /home/gkube_profile.sh
+    - cd helm/
+  tags:
+    - small
+  when: manual
+  parallel:
+    matrix:
+      - _CLUSTER:
+          - rivendell
+          - mordor
+
+.docker-build:
+  image: ${DOCKER_SERVICE}
+  stage: build
+  before_script:
+    - docker login --username "$NEXUS_USER" --password "$NEXUS_PASSWORD" "$DOCKER_REPO_URL"
+  script:
+    - docker build -t ${DOCKER_REPO_URL}/${CI_PROJECT_NAME}:${CI_PIPELINE_ID} -t ${DOCKER_REPO_URL}/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME} . -f Dockerfile
+    - docker push ${DOCKER_REPO_URL}/${CI_PROJECT_NAME}:${CI_PIPELINE_ID}
+    - docker push ${DOCKER_REPO_URL}/${CI_PROJECT_NAME}:${CI_COMMIT_REF_NAME}
+  interruptible: false
+  tags:
+    - medium
+
+.helm-build:
+  image: ${GKUBE_SERVICE}
+  stage: build
+  interruptible: true
+  before_script:
+    - source /home/gkube_profile.sh
+    - *helm-setup
+  tags:
+    - small
+
+
+## test
+
+
+helm-validate:
+  image: ${GKUBE_SERVICE}
+  stage: test
+  before_script:
+    - source /home/gkube_profile.sh
+    - echo mordor | /home/kcc/rancher.sh
+  script:
+    - helm install ./helm --debug --dry-run --generate-name
+  tags:
+    - small
+  rules:
+    - if: ($CI_JOB_MANUAL == null || $CI_JOB_MANUAL == "") && ($CI_COMMIT_TAG == "" || $CI_COMMIT_TAG == null)
+      when: always
+
+
+## build
+
+
+# tags
+
+dockerize-tags:
+  extends: .docker-build
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "web" && $CI_COMMIT_TAG != null
+      when: always
+
+helm-tags:
+  extends: .helm-build
+  needs:
+    - dockerize-tags
+  script:
+    - build_publish_helm_chart helm-tags $CI_COMMIT_TAG cluster-cronitor
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "web" && $CI_COMMIT_TAG != null
+      when: always
+
+# keyword branches
+
+dockerize-branch:
+  extends: .docker-build
+  interruptible: true
+  except:
+    - tags
+    - merge_requests
+
+helm-branch:
+  extends: .helm-build
+  needs:
+    - dockerize-branch
+  script:
+    - build_publish_helm_chart helm-$CI_COMMIT_REF_NAME 0.0.$CI_PIPELINE_ID cluster-cronitor
+  except:
+    - merge_requests
+    - tags
+
+
+# feature branches
+
+dockerize-mr:
+  extends: .docker-build
+  interruptible: true
+  only:
+    - merge_requests
+
+helm-mr:
+  extends: .helm-build
+  needs:
+    - dockerize-mr
+  script:
+    - build_publish_helm_chart helm-feature 0.0.$CI_PIPELINE_ID cluster-cronitor
+  only:
+    - merge_requests
+
+
+## deploy
+
+
+deploy tags chart [HELM_ENV]:
+  extends: .deploy
+  script:
+    - helm search repo helm-tags
+    - echo "$_CLUSTER" | /home/kcc/rancher.sh
+    - helm upgrade --install cluster-cronitor helm-tags/cluster-cronitor
+      --version $CI_COMMIT_TAG
+      --namespace "$HELM_ENV" --create-namespace
+      --set global.image.repository="$DOCKER_REPO_URL"
+      --set cron.image.tag=$CI_COMMIT_TAG
+      --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
+      --set secret.imagePullSecret.value="${}"
+      -f ../helm-environments/environments/docker-clm/"$_CLUSTER".yaml
+    - export cluster="$_CLUSTER"
+    - export namespace="$HELM_ENV"
+    - !reference [.set-namespace-project]
+  rules:
+    - if: ($CI_JOB_MANUAL != null || $CI_JOB_MANUAL != "") && $CI_COMMIT_TAG != null
+      when: manual
+  when: []
+
+deploy branch chart [HELM_ENV]:
+  extends: .deploy
+  script:
+    - helm search repo helm-"$CI_COMMIT_REF_NAME"
+    - echo "$_CLUSTER" | /home/kcc/rancher.sh
+    - helm upgrade --install cluster-cronitor helm-develop/cluster-cronitor
+      --version 0.0.$CI_PIPELINE_ID
+      --namespace "$HELM_ENV" --create-namespace
+      --set image.repository="$DOCKER_REPO_URL"
+      --set image.tag=$CI_PIPELINE_ID
+      --set jts.hostname=${HELM_ENV}.sbe-devops.com
+      -f ../helm-environments/environments/docker-clm/"$_CLUSTER".yaml
+    - export cluster="$_CLUSTER"
+    - export namespace="$HELM_ENV"
+    - !reference [.set-namespace-project]
+  except:
+    - merge_requests
+    - tags
+
+deploy mr chart [HELM_ENV]:
+  extends: .deploy
+  script:
+    - helm search repo helm-feature
+    - echo "$_CLUSTER" | /home/kcc/rancher.sh
+    - helm upgrade --install cluster-cronitor helm-feature/cluster-cronitor
+      --version 0.0.$CI_PIPELINE_ID
+      --namespace "$HELM_ENV" --create-namespace
+      --set image.repository="$DOCKER_REPO_URL"
+      --set image.tag=$CI_PIPELINE_ID
+      --set jts.hostname=${HELM_ENV}.sbe-devops.com
+    - export cluster="$_CLUSTER"
+    - export namespace="$HELM_ENV"
+    - !reference [.set-namespace-project]
+  only:
+    - merge_requests

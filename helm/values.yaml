@@ -1,0 +1,41 @@
+global:
+  storageclass: longhorn
+
+secret:
+  cronitor:
+    name: cronitor
+    key: CRONITOR_TELEMETRY_KEY
+    type: Opaque
+    value: ""
+  imagePullSecret:
+    name: nexus-docker-registry
+    key: .dockerconfigjson
+    type: .dockerconfigjson
+    value: ""
+
+cron:
+  # Run every 10 minutes. An alert is configured to be thrown in @Devops & Tooling if there are two consecutive failures.
+  schedule: '*/10 * * * *'
+
+  image:
+    name: docker.ops.sbe-vision.com/cluster-cronitor
+    tag: 1.0.0
+    pullSecrets:
+      - name: nexus-docker-registry
+
+  env: []
+
+  resources:
+    requests:
+      memory: 250Mi
+      cpu: 0.1
+    limits:
+      memory: 500Mi
+      cpu: 0.25
+
+
+serviceAccount:
+  create: true
+
+  role: {}
+  rolebinding: {}
