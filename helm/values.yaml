@@ -1,5 +1,7 @@
 global:
   storageclass: longhorn
+  docker:
+    registry: docker-ci.ops.sbe-vision.com
 
 secret:
   cronitor:
@@ -18,7 +20,7 @@ cron:
   schedule: '*/10 * * * *'
 
   image:
-    name: docker.ops.sbe-vision.com/cluster-cronitor
+    name: cluster-cronitor
     tag: 1.0.0
     pullSecrets:
       - name: nexus-docker-registry
