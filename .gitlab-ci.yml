@@ -169,7 +169,7 @@ deploy tags chart [HELM_ENV]:
         --namespace "$HELM_ENV" --create-namespace
         --set global.docker.registry="$DOCKER_REPO_URL"
         --set cron.image.tag=$CI_COMMIT_TAG
-        --set cron.env[0].value="$_CLUSTER"
+        --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$_CLUSTER"
         --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
         -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - export cluster="$_CLUSTER"
@@ -185,19 +185,12 @@ deploy branch chart [HELM_ENV]:
   script:
     - helm search repo helm-"$CI_COMMIT_REF_NAME"
     - echo "$_CLUSTER" | /home/kcc/rancher.sh
-    - helm template .
-        --version 0.0.$CI_PIPELINE_ID
-        --namespace "$HELM_ENV" --create-namespace
-        --set global.docker.registry="$DOCKER_REPO_URL"
-        --set cron.image.tag=$CI_COMMIT_REF_NAME
-        --set cron.env[0].value="$_CLUSTER"
-        --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
-        -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - helm upgrade --install cluster-cronitor helm-master/cluster-cronitor
         --version 0.0.$CI_PIPELINE_ID
         --namespace "$HELM_ENV" --create-namespace
         --set global.docker.registry="$DOCKER_REPO_URL"
         --set cron.image.tag=$CI_COMMIT_REF_NAME
+        --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$_CLUSTER"
         --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
         -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - export cluster="$_CLUSTER"
@@ -216,7 +209,7 @@ deploy mr chart [HELM_ENV]:
         --namespace "$HELM_ENV" --create-namespace
         --set global.docker.registry="$DOCKER_REPO_URL"
         --set cron.image.tag=$CI_COMMIT_REF_NAME
-        --set cron.env[0].value="$_CLUSTER"
+        --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$_CLUSTER"
         --set secret.cronitor.value="${CRONITOR_TELEMETRY_KEY}"
         -f ../helm-environments/environments/$CI_PROJECT_NAME/${_CLUSTER}.yaml
     - export cluster="$_CLUSTER"
