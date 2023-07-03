@@ -1,6 +1,6 @@
 # cluster-cronitor
 
-![rivendell](https://cronitor.io/badges/LN2pTl/production/FKcsTNjmkX1Pz54PSBgGKYcG-GM.svg)
+![rivendell](https://cronitor.io/badges/LN2pTl/production/FKcsTNjmkX1Pz54PSBgGKYcG-GM.svg)  ![mordor](https://cronitor.io/badges/YIKpIN/production/hZ9-2CvKx0zbnxJE8KWhwAUFOHg.svg)
 
 Cronjob that checks in with [cronitor.io](https://cronitor.io/) and alerts if the following items in a cluster are off.
 
