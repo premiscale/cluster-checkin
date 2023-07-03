@@ -13,7 +13,7 @@ secret:
 
 cron:
   # Run every 10 minutes. An alert is configured to be thrown in @Devops & Tooling if there are two consecutive failures.
-  schedule: '*/10 * * * *'
+  schedule: '*/2 * * * *'
 
   image:
     name: cluster-cronitor
