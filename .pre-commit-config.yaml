@@ -1,0 +1,52 @@
+fail_fast: true
+repos:
+  # - repo: https://github.com/bjd2385/pre-commit-gitlabci-lint
+  #   rev: v1.3.0
+  #   hooks:
+  #     - id: gitlabci-lint
+  #       # Expects env var like GITHUB_TOKEN=\"$\(pass show github-token\)\".
+  #       args:
+  #         [
+  #           -b, 'https://git.ops.sbe-vision.com',
+  #           -c, .gitlab-ci.yml,
+  #           -p, '409'
+  #         ]
+
+  # Requires hadolint binary on local machine.
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.1-beta
+    hooks:
+      - id: hadolint
+        args:
+          - --config
+          - .hadolint.yaml
+          - -t
+          - error
+          - Dockerfile
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: check-added-large-files
+        args: [--maxkb=10000, --enforce-all]
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: mixed-line-ending
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: shellcheck
+        args:
+          - -x
+
+  - repo: https://github.com/gruntwork-io/pre-commit
+    rev: v0.1.22
+    hooks:
+      - id: helmlint
+
+  - repo: https://github.com/premiscale/pre-commit-hooks
+    rev: v0.0.9
+    hooks:
+    -   id: msg-issue-prefix
