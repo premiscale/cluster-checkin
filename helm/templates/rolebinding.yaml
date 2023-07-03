@@ -15,7 +15,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ .Chart.Name }}
-    apiGroup: v1
+    apiGroup: ""
 roleRef:
   kind: ClusterRole
   name: {{ .Chart.Name }}
@@ -38,7 +38,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: {{ .Chart.Name }}
-    apiGroup: v1
+    apiGroup: ""
 roleRef:
   kind: ClusterRole
   name: {{ .Chart.Name }}
