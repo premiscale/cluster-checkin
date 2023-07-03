@@ -25,6 +25,7 @@ cron:
     pullSecrets:
       - name: nexus-docker-registry
 
+  # Specify additional environment variables. Must be a list of valid podspec env vars.
   env: []
 
   resources:
@@ -35,9 +36,15 @@ cron:
       memory: 500Mi
       cpu: 0.25
 
+  annotations: {}
+  labels: {}
+
 
 serviceAccount:
-  create: true
+  enabled: true
 
   role: {}
   rolebinding: {}
+
+  annotations: {}
+  labels: {}
