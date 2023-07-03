@@ -2,6 +2,10 @@
 # Wrap tests in the cronitor.io API.
 
 
+set -eo pipefail
+shopt -s nullglob
+
+
 _CRONITOR_TELEMETRY_KEY="${CRONITOR_TELEMETRY_KEY:-notset}"
 _CLUSTER_ID="${CLUSTER_ID:-rivendell}"
 
@@ -11,6 +15,8 @@ _CLUSTER_ID="${CLUSTER_ID:-rivendell}"
 test_nodes_not_ready()
 {
     kubectl get nodes | grep -qP "(NotReady)"
+
+    return $?
 }
 
 
@@ -19,6 +25,8 @@ test_nodes_not_ready()
 test_kube_system_pods()
 {
     kubectl get pods -n kube-system | grep -qP "(Error|ImagePullBackoff|PostStartHookError|PreStopHookError|InvalidImageName)"
+
+    return $?
 }
 
 
