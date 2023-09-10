@@ -21,8 +21,6 @@ workflows:
 
       - slack/on-hold:
           context: slack
-          requires:
-            - general/orb-pack
           filters:
             branches:
               ignore: /.*/
