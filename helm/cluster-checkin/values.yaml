@@ -6,6 +6,7 @@ global:
 
 secret:
   cronitor:
+    create: false
     name: cronitor
     key: CRONITOR_TELEMETRY_KEY
     type: Opaque
