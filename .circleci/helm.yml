@@ -9,7 +9,7 @@ workflows:
   helm:
     jobs:
       - general/helm-lint:
-          name: helm lint [helm/]
+          name: helm lint [helm/cluster-checkin]
           chart-path: helm/$CIRCLE_PROJECT_REPONAME
 
       # develop branches
@@ -19,7 +19,7 @@ workflows:
           image-name: cluster-checkin
           context: nexus
           requires:
-            - helm lint [helm/]
+            - helm lint [helm/cluster-checkin]
           path: .
           nexus-domain: $DOCKER_DEVELOP_DOMAIN
           tag: 0.0.<< pipeline.number >>
@@ -29,7 +29,7 @@ workflows:
                 - master
 
       - general/helm-release-nexus:
-          name: helm build and push [helm/] [develop]
+          name: helm build and push [helm/cluster-checkin] [develop]
           context: nexus
           repo: $HELM_DEVELOP_REPOSITORY_URL
           version: 0.0.<< pipeline.number >>
@@ -37,7 +37,7 @@ workflows:
           # Uses https://mikefarah.gitbook.io/yq/operators/env-variable-operators#dynamically-update-a-path-from-an-environment-variable
           image-tag-path: .cron.image.tag
           requires:
-            - helm lint [helm/]
+            - helm lint [helm/cluster-checkin]
             - docker [cluster-checkin] [develop]
           filters:
             branches:
@@ -45,7 +45,7 @@ workflows:
                 - master
 
       - general/helm-upgrade:
-          name: helm upgrade install [helm/cluster-checkin] [develop]
+          name: helm upgrade install [helm/cluster-checkincluster-checkin] [develop]
           cluster: $CHELSEA_CLUSTER
           namespace: crons
           repo: $HELM_DEVELOP_REPOSITORY_URL
@@ -53,7 +53,7 @@ workflows:
           additional-values: |
             --set global.image.registry="$DOCKER_DEVELOP_DOMAIN" --set cron.image.pullSecrets[0]=nexus-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
           requires:
-            - helm build and push [helm/] [develop]
+            - helm build and push [helm/cluster-checkin] [develop]
             - docker [cluster-checkin] [develop]
           context:
             - kubeconfig
@@ -70,7 +70,7 @@ workflows:
           image-name: cluster-checkin
           context: nexus
           requires:
-            - helm lint [helm/]
+            - helm lint [helm/cluster-checkin]
           path: .
           nexus-domain: $DOCKER_MASTER_DOMAIN
           tag: 0.0.<< pipeline.number >>
@@ -80,7 +80,7 @@ workflows:
                 - master
 
       - general/helm-release-nexus:
-          name: helm build and push [helm/] [master]
+          name: helm build and push [helm/cluster-checkin] [master]
           context: nexus
           repo: $HELM_MASTER_REPOSITORY_URL
           version: 0.0.<< pipeline.number >>
@@ -89,7 +89,7 @@ workflows:
           # image-tag-path: .[env(CIRCLE_PROJECT_REPONAME)].image.tag
           image-tag-path: .cron.image.tag
           requires:
-            - helm lint [helm/]
+            - helm lint [helm/cluster-checkin]
             - docker [cluster-checkin] [master]
           filters:
             branches:
@@ -97,7 +97,7 @@ workflows:
                 - master
 
       - general/helm-upgrade:
-          name: helm upgrade install [helm/] [master]
+          name: helm upgrade install [helm/cluster-checkin] [master]
           cluster: $CHELSEA_CLUSTER
           namespace: crons
           repo: $HELM_MASTER_REPOSITORY_URL
@@ -105,7 +105,7 @@ workflows:
           additional-values: |
             --set global.image.registry="$DOCKER_MASTER_DOMAIN" --set cron.image.pullSecrets[0]=nexus-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
           requires:
-            - helm build and push [helm/] [master]
+            - helm build and push [helm/cluster-checkin] [master]
             - docker [cluster-checkin] [master]
           context:
             - kubeconfig
