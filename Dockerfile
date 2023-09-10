@@ -8,6 +8,7 @@ ENV CRONITOR_TELEMETRY_KEY=""
 RUN apt-get update \
     && apt-get install -y curl unzip \
     && rm -rf /var/lib/apt/lists/* \
+    && groupadd cronitor \
     && useradd -rm -d /opt/cronitor -s /bin/bash -g cronitor -G sudo -u 1001 cronitor
 
 RUN curl -sOL "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \

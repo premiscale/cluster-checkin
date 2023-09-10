@@ -16,6 +16,7 @@ workflows:
 
       - dynamic/continue:
           context: circleci
+          default-branch: master
 
       # On tag
 
@@ -59,7 +60,7 @@ workflows:
               only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
 
       - general/helm-release-nexus:
-          name: helm build and push [helm/] [tag]
+          name: helm build and push [helm/cluster-checkin] [tag]
           context: nexus
           repo: $HELM_REPOSITORY_URL
           version: $CIRCLE_TAG
@@ -80,9 +81,9 @@ workflows:
           repo: $HELM_REPOSITORY_URL
           version: 0.0.<< pipeline.number >>
           additional-values: |
-            --set global.image.registry="$REPO_DOMAIN" --set global.registry="$DOCKER_DOMAIN"
+            --set global.registry="$DOCKER_DOMAIN" --set cron.image.pullSecrets[0]=nexus-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
           requires:
-            - helm build and push [helm/] [tag]
+            - helm build and push [helm/cluster-checkin] [tag]
             - docker [cluster-checkin] [tag]
           context:
             - kubeconfig

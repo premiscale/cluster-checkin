@@ -1,11 +1,12 @@
 global:
   storageclass: longhorn
-  docker:
+  image:
     registry: ''
     secretType: dockerconfigjson
 
 secret:
   cronitor:
+    create: false
     name: cronitor
     key: CRONITOR_TELEMETRY_KEY
     type: Opaque
@@ -16,7 +17,7 @@ cron:
   schedule: '*/10 * * * *'
 
   image:
-    name: cluster-cronitor
+    name: cluster-checkin
     tag: 1.0.0
     pullSecrets: []
 

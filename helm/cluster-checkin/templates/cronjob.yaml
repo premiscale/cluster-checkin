@@ -28,8 +28,8 @@ spec:
           {{- end }}
           containers:
             - name: {{ .Chart.Name }}
-              {{- if .Values.global.docker.registry }}
-              image: "{{ .Values.global.docker.registry }}/{{ .Values.cron.image.name }}:{{ .Values.cron.image.tag }}"
+              {{- if .Values.global.image.registry }}
+              image: "{{ .Values.global.image.registry }}/{{ .Values.cron.image.name }}:{{ .Values.cron.image.tag }}"
               {{- else }}
               image: "{{ .Values.cron.image.name }}:{{ .Values.cron.image.tag }}"
               {{- end }}
@@ -46,13 +46,13 @@ spec:
                       name: {{ .name }}
                       key: {{ .key }}
                 {{- end }}
-              {{- if gt (len .Values.cron.env) 0 }}
-                {{- toYaml .Values.cron.env | nindent 16 }}
+              {{- if .Values.cron.env }}
+              {{- include "cluster-checkin.tplvalues.render" (dict "value" .Values.cron.env "context" $) | nindent 16 }}
               {{- end }}
           {{- if gt (len .Values.cron.image.pullSecrets) 0 }}
             {{- range .Values.cron.image.pullSecrets }}
           imagePullSecrets:
-            - name: {{ .name }}
+            - name: {{ . }}
             {{- end }}
           {{- end }}
           restartPolicy: Never
