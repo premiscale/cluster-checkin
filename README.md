@@ -1,5 +1,7 @@
 # cluster-checkin
 
+![chelsea cluster checkin](https://cronitor.io/badges/LeAIyN/production/F6BcmSIyjKHhhJTTEGqN04EZ-B0.svg)
+
 <!--
 <p align="center" width="100%">
   <img width="75%" src="img/ui.png" alt="example">
