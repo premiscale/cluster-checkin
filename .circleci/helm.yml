@@ -2,7 +2,7 @@ version: 2.1
 
 
 orbs:
-  general: bjd2385/general@0.7.5
+  general: bjd2385/general@0.7.6
 
 
 workflows:
@@ -34,7 +34,6 @@ workflows:
           repo: $HELM_DEVELOP_REPOSITORY_URL
           version: 0.0.<< pipeline.number >>
           image-tag: 0.0.<< pipeline.number >>
-          # Uses https://mikefarah.gitbook.io/yq/operators/env-variable-operators#dynamically-update-a-path-from-an-environment-variable
           image-tag-path: .cron.image.tag
           requires:
             - helm lint [helm/cluster-checkin]
@@ -85,8 +84,6 @@ workflows:
           repo: $HELM_MASTER_REPOSITORY_URL
           version: 0.0.<< pipeline.number >>
           image-tag: 0.0.<< pipeline.number >>
-          # Uses https://mikefarah.gitbook.io/yq/operators/env-variable-operators#dynamically-update-a-path-from-an-environment-variable
-          # image-tag-path: .[env(CIRCLE_PROJECT_REPONAME)].image.tag
           image-tag-path: .cron.image.tag
           requires:
             - helm lint [helm/cluster-checkin]
