@@ -60,3 +60,32 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+
+# I took the below definition from bitnami's common chart.
+# https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_tplvalues.tpl#L6
+
+{{/*
+Copyright VMware, Inc.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
+{{/*
+Renders a value that contains template perhaps with scope if the scope is present.
+
+Usage:
+{{ include "cluster-checkin.tplvalues.render" ( dict "value" .Values.path.to.the.Value "context" $ ) }}
+{{ include "cluster-checkin.tplvalues.render" ( dict "value" .Values.path.to.the.Value "context" $ "scope" $app ) }}
+*/}}
+{{- define "cluster-checkin.tplvalues.render" -}}
+{{- $value := typeIs "string" .value | ternary .value (.value | toYaml) }}
+{{- if contains "{{" (toJson .value) }}
+  {{- if .scope }}
+      {{- tpl (cat "{{- with $.RelativeScope -}}" $value "{{- end }}") (merge (dict "RelativeScope" .scope) .context) }}
+  {{- else }}
+    {{- tpl $value .context }}
+  {{- end }}
+{{- else }}
+    {{- $value }}
+{{- end }}
+{{- end -}}

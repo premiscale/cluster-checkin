@@ -46,8 +46,8 @@ spec:
                       name: {{ .name }}
                       key: {{ .key }}
                 {{- end }}
-              {{- if gt (len .Values.cron.env) 0 }}
-                {{- toYaml .Values.cron.env | nindent 16 }}
+              {{- if .Values.cron.env }}
+              {{- include "cluster-checkin.tplvalues.render" (dict "value" .Values.cron.env "context" $) | nindent 16 }}
               {{- end }}
           {{- if gt (len .Values.cron.image.pullSecrets) 0 }}
             {{- range .Values.cron.image.pullSecrets }}
