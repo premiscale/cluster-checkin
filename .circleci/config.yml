@@ -67,7 +67,6 @@ workflows:
           # Uses https://mikefarah.gitbook.io/yq/operators/env-variable-operators#dynamically-update-a-path-from-an-environment-variable
           image-tag-path: .cron.image.tag
           requires:
-            - helm lint [helm/]
             - docker [cluster-checkin] [tag]
           filters:
             branches:

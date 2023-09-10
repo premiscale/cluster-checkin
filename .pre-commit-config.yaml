@@ -1,5 +1,6 @@
 fail_fast: true
 repos:
+  # Requires hadolint binary on local machine.
   - repo: https://github.com/hadolint/hadolint
     rev: v2.12.1-beta
     hooks:
@@ -7,8 +8,6 @@ repos:
         args:
           - --config
           - .hadolint.yaml
-          - -t
-          - error
           - Dockerfile
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -28,10 +27,23 @@ repos:
         args:
           - -x
 
+  - repo: https://github.com/bjd2385/dynamic-continuation-orb
+    rev: v3.7.1
+    hooks:
+      - id: circleci-config-validate
+
   - repo: https://github.com/gruntwork-io/pre-commit
     rev: v0.1.22
     hooks:
       - id: helmlint
+
+  - repo: https://github.com/PyCQA/pylint
+    rev: v3.0.0a7
+    hooks:
+      - id: pylint
+        args:
+          - --rcfile=.pylintrc
+          - premiscale/
 
   - repo: https://github.com/premiscale/pre-commit-hooks
     rev: v0.0.9
