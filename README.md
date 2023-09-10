@@ -14,4 +14,4 @@ CronJob for Kubernetes that checks in with [cronitor.io](https://cronitor.io/) a
 - Any nodes are not in a `Ready` state
 - Any pods in the `kube-system` namespace are not in a `Running` state
 
-See also the [status page](https://premiscale.cronitorstatus.com/).
+See also the [status page](https://premiscale-development.cronitorstatus.com/).
