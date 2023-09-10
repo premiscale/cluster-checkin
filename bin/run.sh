@@ -29,7 +29,7 @@ test_nodes_not_ready()
 test_pods_namespace()
 {
     if [ $# -ne 1 ]; then
-        printf "Function \"test_pods\" expected 1 argument: namespace name." >&2
+        printf "Function \"test_pods_namespace\" expected 1 argument: namespace name." >&2
         exit 1
     fi
 
