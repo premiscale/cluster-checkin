@@ -19,23 +19,33 @@ spec:
     spec:
       template:
         spec:
+          {{- with .Values.cron.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- if .Values.serviceAccount.enabled }}
           serviceAccountName: {{ .Chart.Name }}
           {{- end }}
           containers:
             - name: {{ .Chart.Name }}
+              {{- if .Values.global.docker.registry }}
               image: "{{ .Values.global.docker.registry }}/{{ .Values.cron.image.name }}:{{ .Values.cron.image.tag }}"
+              {{- else }}
+              image: "{{ .Values.cron.image.name }}:{{ .Values.cron.image.tag }}"
+              {{- end }}
               imagePullPolicy: Always
               {{- with .Values.cron.resources }}
               resources:
                 {{- toYaml . | nindent 16 }}
               {{- end }}
               env:
+                {{- with .Values.secret.cronitor }}
                 - name: CRONITOR_TELEMETRY_KEY
                   valueFrom:
                     secretKeyRef:
-                      name: cronitor
-                      key: CRONITOR_TELEMETRY_KEY
+                      name: {{ .name }}
+                      key: {{ .key }}
+                {{- end }}
               {{- if gt (len .Values.cron.env) 0 }}
                 {{- toYaml .Values.cron.env | nindent 16 }}
               {{- end }}

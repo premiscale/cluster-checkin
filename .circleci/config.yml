@@ -1,0 +1,17 @@
+version: 2.1
+
+setup: true
+
+
+executors: {}
+
+
+orbs:
+  dynamic: bjd2385/dynamic-continuation@3.7.1
+
+
+workflows:
+  cluster-checkin:
+    jobs:
+      - dynamic/continue:
+          context: circleci

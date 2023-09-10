@@ -1,18 +1,5 @@
 fail_fast: true
 repos:
-  # - repo: https://github.com/bjd2385/pre-commit-gitlabci-lint
-  #   rev: v1.3.0
-  #   hooks:
-  #     - id: gitlabci-lint
-  #       # Expects env var like GITHUB_TOKEN=\"$\(pass show github-token\)\".
-  #       args:
-  #         [
-  #           -b, 'https://git.ops.sbe-vision.com',
-  #           -c, .gitlab-ci.yml,
-  #           -p, '409'
-  #         ]
-
-  # Requires hadolint binary on local machine.
   - repo: https://github.com/hadolint/hadolint
     rev: v2.12.1-beta
     hooks:

@@ -1,7 +1,7 @@
 global:
   storageclass: longhorn
   docker:
-    registry: docker-ci.ops.sbe-vision.com
+    registry: ''
     secretType: dockerconfigjson
 
 secret:
@@ -18,11 +18,7 @@ cron:
   image:
     name: cluster-cronitor
     tag: 1.0.0
-    pullSecrets:
-      - name: nexus-docker-registry
-        value: ""
-        labels: {}
-        annotations: {}
+    pullSecrets: []
 
   # Specify additional environment variables. Must be a list of valid podspec env vars.
   env:
@@ -31,11 +27,14 @@ cron:
 
   resources:
     requests:
-      memory: 250Mi
+      memory: 125Mi
       cpu: 0.1
     limits:
-      memory: 500Mi
+      memory: 125Mi
       cpu: 0.25
+
+  securityContext:
+    runAsUser: 1001
 
   annotations: {}
   labels: {}
@@ -44,8 +43,12 @@ cron:
 serviceAccount:
   enabled: true
 
-  role: {}
-  rolebinding: {}
-
   annotations: {}
   labels: {}
+
+  clusterRole:
+    labels: {}
+    annotations: {}
+  clusterRoleBinding:
+    labels: {}
+    annotations: {}
