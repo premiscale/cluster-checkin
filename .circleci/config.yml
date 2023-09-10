@@ -47,3 +47,51 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+
+      - general/docker-nexus:
+          name: docker [cluster-checkin] [tag]
+          image-name: cluster-checkin
+          context: nexus
+          path: .
+          nexus-domain: $DOCKER_DOMAIN
+          tag: $CIRCLE_TAG
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+
+      - general/helm-release-nexus:
+          name: helm build and push [helm/] [tag]
+          context: nexus
+          repo: $HELM_REPOSITORY_URL
+          version: $CIRCLE_TAG
+          image-tag: $CIRCLE_TAG
+          # Uses https://mikefarah.gitbook.io/yq/operators/env-variable-operators#dynamically-update-a-path-from-an-environment-variable
+          image-tag-path: .cron.image.tag
+          requires:
+            - helm lint [helm/]
+            - docker [cluster-checkin] [tag]
+          filters:
+            branches:
+              ignore:
+                - master
+
+      - general/helm-upgrade:
+          name: helm upgrade install [helm/cluster-checkin] [tag]
+          cluster: $CHELSEA_CLUSTER
+          namespace: crons
+          repo: $HELM_REPOSITORY_URL
+          version: 0.0.<< pipeline.number >>
+          additional-values: |
+            --set global.image.registry="$REPO_DOMAIN" --set global.registry="$DOCKER_DOMAIN"
+          requires:
+            - helm build and push [helm/] [tag]
+            - docker [cluster-checkin] [tag]
+          context:
+            - kubeconfig
+            - nexus
+          filters:
+            branches:
+              ignore:
+                - master
