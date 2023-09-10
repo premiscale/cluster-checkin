@@ -85,7 +85,7 @@ workflows:
           repo: $HELM_REPOSITORY_URL
           version: $CIRCLE_TAG
           additional-values: |
-            --set global.registry="$DOCKER_DOMAIN" --set cron.image.pullSecrets[0]=nexus-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
+            --set global.image.registry="$DOCKER_DOMAIN" --set cron.image.pullSecrets[0]=nexus-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
           requires:
             - helm build and push [helm/cluster-checkin] [tag]
             - docker [cluster-checkin] [tag]
