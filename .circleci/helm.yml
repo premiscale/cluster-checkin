@@ -10,6 +10,7 @@ workflows:
     jobs:
       - general/helm-lint:
           name: helm lint [helm/]
+          chart-path: helm/$CIRCLE_PROJECT_REPONAME
 
       # develop branches
 
