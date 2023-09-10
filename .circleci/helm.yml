@@ -17,6 +17,8 @@ workflows:
           name: docker [cluster-checkin] [develop]
           image-name: cluster-checkin
           context: nexus
+          requires:
+            - helm lint [helm/]
           path: .
           nexus-domain: $DOCKER_DEVELOP_DOMAIN
           tag: 0.0.<< pipeline.number >>
@@ -66,6 +68,8 @@ workflows:
           name: docker [cluster-checkin] [master]
           image-name: cluster-checkin
           context: nexus
+          requires:
+            - helm lint [helm/]
           path: .
           nexus-domain: $DOCKER_MASTER_DOMAIN
           tag: 0.0.<< pipeline.number >>
@@ -85,6 +89,7 @@ workflows:
           image-tag-path: .cron.image.tag
           requires:
             - helm lint [helm/]
+            - docker [cluster-checkin] [master]
           filters:
             branches:
               only:
