@@ -71,8 +71,9 @@ workflows:
             - docker [cluster-checkin] [tag]
           filters:
             branches:
-              ignore:
-                - master
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
 
       - general/helm-upgrade:
           name: helm upgrade install [helm/cluster-checkin] [tag]
@@ -90,5 +91,6 @@ workflows:
             - nexus
           filters:
             branches:
-              ignore:
-                - master
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
