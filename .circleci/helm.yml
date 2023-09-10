@@ -44,7 +44,7 @@ workflows:
       - general/helm-upgrade:
           name: helm upgrade install [helm/cluster-checkin] [develop]
           cluster: $CHELSEA_CLUSTER
-          namespace: platform-develop
+          namespace: crons
           repo: $HELM_DEVELOP_REPOSITORY_URL
           version: 0.0.<< pipeline.number >>
           additional-values: |
@@ -93,7 +93,7 @@ workflows:
       - general/helm-upgrade:
           name: helm upgrade install [helm/] [master]
           cluster: $CHELSEA_CLUSTER
-          namespace: platform-master
+          namespace: crons
           repo: $HELM_MASTER_REPOSITORY_URL
           version: 0.0.<< pipeline.number >>
           additional-values: |
