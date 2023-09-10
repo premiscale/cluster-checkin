@@ -28,8 +28,8 @@ spec:
           {{- end }}
           containers:
             - name: {{ .Chart.Name }}
-              {{- if .Values.global.docker.registry }}
-              image: "{{ .Values.global.docker.registry }}/{{ .Values.cron.image.name }}:{{ .Values.cron.image.tag }}"
+              {{- if .Values.global.image.registry }}
+              image: "{{ .Values.global.image.registry }}/{{ .Values.cron.image.name }}:{{ .Values.cron.image.tag }}"
               {{- else }}
               image: "{{ .Values.cron.image.name }}:{{ .Values.cron.image.tag }}"
               {{- end }}

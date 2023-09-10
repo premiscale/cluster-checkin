@@ -1,6 +1,6 @@
 global:
   storageclass: longhorn
-  docker:
+  image:
     registry: ''
     secretType: dockerconfigjson
 
