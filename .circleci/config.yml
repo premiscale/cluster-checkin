@@ -67,7 +67,6 @@ workflows:
           repo: $HELM_REPOSITORY_URL
           version: $CIRCLE_TAG
           image-tag: $CIRCLE_TAG
-          # Uses https://mikefarah.gitbook.io/yq/operators/env-variable-operators#dynamically-update-a-path-from-an-environment-variable
           image-tag-path: .cron.image.tag
           requires:
             - docker [cluster-checkin] [tag]
