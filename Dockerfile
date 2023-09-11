@@ -20,9 +20,9 @@ RUN apt-get update \
     && groupadd cronitor \
     && useradd -rm -d /opt/cronitor -s /bin/bash -g cronitor -G sudo -u 1001 cronitor
 
-RUN curl -sOL "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
-    install kubectl /usr/bin/kubectl && \
-    rm kubectl
+RUN curl -sOL "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && install kubectl /usr/bin/kubectl \
+    && rm kubectl
 
 WORKDIR /app
 COPY bin/run.sh .
