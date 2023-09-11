@@ -1,4 +1,13 @@
-FROM ubuntu:22.04
+ARG IMAGE=ubuntu
+ARG TAG=22.04
+
+FROM ${IMAGE}:${TAG}
+
+# https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
+LABEL org.opencontainers.image.description "© PremiScale, Inc. 2023"
+LABEL org.opencontainers.image.licenses "GPLv3"
+LABEL org.opencontainers.image.authors "Emma Doyle <emma@premiscale.com>"
+LABEL org.opencontainers.image.documentation "https://premiscale.com"
 
 USER root
 

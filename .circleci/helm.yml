@@ -44,7 +44,7 @@ workflows:
                 - master
 
       - general/helm-upgrade:
-          name: helm upgrade install [helm/cluster-checkincluster-checkin] [develop]
+          name: helm upgrade install [helm/cluster-checkin] [develop]
           cluster: $CHELSEA_CLUSTER
           namespace: crons
           repo: $HELM_DEVELOP_REPOSITORY_URL
