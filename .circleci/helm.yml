@@ -2,7 +2,7 @@ version: 2.1
 
 
 orbs:
-  general: bjd2385/general@0.7.7
+  general: premiscale/general@1.0.9
 
 
 workflows:

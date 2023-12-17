@@ -5,7 +5,7 @@ setup: true
 
 orbs:
   dynamic: bjd2385/dynamic-continuation@3.7.1
-  general: bjd2385/general@0.7.8
+  general: premiscale/general@1.0.9
   slack: circleci/slack@4.12.5
 
 
@@ -49,10 +49,23 @@ workflows:
       - general/docker-nexus:
           name: docker [cluster-checkin] [tag]
           image-name: cluster-checkin
-          context: nexus
-          path: .
+          context:
+            - nexus
           nexus-domain: $DOCKER_DOMAIN
-          tag: $CIRCLE_TAG
+          requires:
+            - request-approval
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+
+      - general/docker-hub:
+          name: dockerhub [cluster-checkin] [tag]
+          image-name: cluster-checkin
+          context:
+            - nexus
+            - dockerhub
           requires:
             - request-approval
           filters:
