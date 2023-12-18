@@ -51,6 +51,7 @@ workflows:
       - general/docker-nexus:
           name: docker [cluster-checkin] [tag]
           image-name: cluster-checkin
+          tag: $CIRCLE_TAG
           context:
             - nexus
           nexus-domain: $DOCKER_DOMAIN
@@ -65,6 +66,7 @@ workflows:
       - general/docker-hub:
           name: dockerhub [cluster-checkin] [tag]
           image-name: cluster-checkin
+          tag: $CIRCLE_TAG
           context:
             - nexus
             - dockerhub
