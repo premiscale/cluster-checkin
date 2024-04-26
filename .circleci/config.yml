@@ -5,8 +5,8 @@ setup: true
 
 orbs:
   dynamic: bjd2385/dynamic-continuation@3.8.1
-  general: premiscale/general@1.0.12
-  slack: circleci/slack@4.12.5
+  general: premiscale/general@dev:a7c7025cadb05fd4fa2c7e82da4169b0d144cf5a
+  slack: circleci/slack@4.13.2
 
 
 workflows:
@@ -48,13 +48,13 @@ workflows:
             tags:
               only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
 
-      - general/docker-nexus:
+      - general/docker-ecr:
           name: docker [cluster-checkin] [tag]
           image-name: cluster-checkin
           tag: $CIRCLE_TAG
+          aws-ecr-name: release
           context:
-            - nexus
-          nexus-domain: $DOCKER_DOMAIN
+            - aws-development
           requires:
             - request-approval
           filters:
@@ -68,7 +68,6 @@ workflows:
           image-name: cluster-checkin
           tag: $CIRCLE_TAG
           context:
-            - nexus
             - dockerhub
           requires:
             - request-approval
@@ -100,12 +99,13 @@ workflows:
           namespace: crons
           repo: $HELM_REPOSITORY_URL
           additional-values: |
-            --set global.image.registry="$DOCKER_DOMAIN" --set cron.image.pullSecrets[0]=nexus-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
+            --set global.image.registry="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/release" --set cron.image.pullSecrets[0]=ecr-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
           requires:
             - helm build and push [helm/cluster-checkin] [tag]
             - docker [cluster-checkin] [tag]
           context:
             - kubeconfig
+            - aws-development
             - nexus
           filters:
             branches:
