@@ -68,8 +68,9 @@ workflows:
       - general/docker-ecr:
           name: docker [cluster-checkin] [master]
           image-name: cluster-checkin
-          context: nexus
-          aws-ecr-name: develop
+          context:
+            - aws-development
+          aws-ecr-name: master
           requires:
             - helm lint [helm/cluster-checkin]
           path: .
