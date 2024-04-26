@@ -17,6 +17,7 @@ workflows:
       - general/docker-ecr:
           name: docker [cluster-checkin] [develop]
           image-name: cluster-checkin
+          branch-tag: true
           context:
             - aws-development
           requires:
@@ -67,6 +68,7 @@ workflows:
       - general/docker-ecr:
           name: docker [cluster-checkin] [master]
           image-name: cluster-checkin
+          branch-tag: true
           context:
             - aws-development
           requires:
