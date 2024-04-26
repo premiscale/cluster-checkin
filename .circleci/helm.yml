@@ -12,7 +12,7 @@ workflows:
           name: helm lint [helm/cluster-checkin]
           chart-path: helm/$CIRCLE_PROJECT_REPONAME
 
-      # develop branches
+      # develop
 
       - general/docker-ecr:
           name: docker [cluster-checkin] [develop]
@@ -63,7 +63,7 @@ workflows:
               ignore:
                 - master
 
-      # master branch
+      # master
 
       - general/docker-ecr:
           name: docker [cluster-checkin] [master]
