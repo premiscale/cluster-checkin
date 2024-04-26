@@ -2,7 +2,7 @@ version: 2.1
 
 
 orbs:
-  general: premiscale/general@dev:a7c7025cadb05fd4fa2c7e82da4169b0d144cf5a
+  general: premiscale/general@dev:6db0ff051999955508bd1cdb04aaecb3091976d8
 
 
 workflows:
@@ -22,7 +22,6 @@ workflows:
           requires:
             - helm lint [helm/cluster-checkin]
           path: .
-          aws-ecr-name: develop
           tag: 0.0.<< pipeline.number >>
           filters:
             branches:
@@ -70,7 +69,6 @@ workflows:
           image-name: cluster-checkin
           context:
             - aws-development
-          aws-ecr-name: master
           requires:
             - helm lint [helm/cluster-checkin]
           path: .

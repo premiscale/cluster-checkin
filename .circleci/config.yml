@@ -5,7 +5,7 @@ setup: true
 
 orbs:
   dynamic: bjd2385/dynamic-continuation@3.8.1
-  general: premiscale/general@dev:a7c7025cadb05fd4fa2c7e82da4169b0d144cf5a
+  general: premiscale/general@dev:6db0ff051999955508bd1cdb04aaecb3091976d8
   slack: circleci/slack@4.13.2
 
 
@@ -52,7 +52,6 @@ workflows:
           name: docker [cluster-checkin] [tag]
           image-name: cluster-checkin
           tag: $CIRCLE_TAG
-          aws-ecr-name: release
           context:
             - aws-development
           requires:
