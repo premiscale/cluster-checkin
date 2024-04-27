@@ -2,7 +2,7 @@ version: 2.1
 
 
 orbs:
-  general: premiscale/general@dev:625a11bf81adbdfa210f5be4b5db83f2d3700b1b
+  general: premiscale/general@dev:c811654b387e06b43f38ae8e0680539baf9ca06c
 
 
 workflows:

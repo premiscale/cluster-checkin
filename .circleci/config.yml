@@ -5,7 +5,7 @@ setup: true
 
 orbs:
   dynamic: bjd2385/dynamic-continuation@3.8.1
-  general: premiscale/general@dev:625a11bf81adbdfa210f5be4b5db83f2d3700b1b
+  general: premiscale/general@dev:c811654b387e06b43f38ae8e0680539baf9ca06c
   slack: circleci/slack@4.13.2
 
 
@@ -76,13 +76,14 @@ workflows:
             tags:
               only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
 
-      - general/helm-release-nexus:
+      - general/helm-release-ecr:
           name: helm build and push [helm/cluster-checkin] [tag]
-          context: nexus
-          repo: $HELM_REPOSITORY_URL
+          context:
+            - aws-development
           version: $CIRCLE_TAG
           image-tag: $CIRCLE_TAG
           image-tag-path: .cron.image.tag
+
           requires:
             - docker [cluster-checkin] [tag]
             - request-approval
