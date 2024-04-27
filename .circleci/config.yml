@@ -83,7 +83,6 @@ workflows:
           version: $CIRCLE_TAG
           image-tag: $CIRCLE_TAG
           image-tag-path: .cron.image.tag
-
           requires:
             - docker [cluster-checkin] [tag]
             - request-approval

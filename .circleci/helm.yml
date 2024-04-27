@@ -29,10 +29,10 @@ workflows:
               ignore:
                 - master
 
-      - general/helm-release-nexus:
+      - general/helm-release-ecr:
           name: helm build and push [helm/cluster-checkin] [develop]
-          context: nexus
-          repo: $HELM_DEVELOP_REPOSITORY_URL
+          context:
+            - aws-development
           version: 0.0.<< pipeline.number >>
           image-tag: 0.0.<< pipeline.number >>
           image-tag-path: .cron.image.tag
@@ -80,9 +80,10 @@ workflows:
               only:
                 - master
 
-      - general/helm-release-nexus:
+      - general/helm-release-ecr:
           name: helm build and push [helm/cluster-checkin] [master]
-          context: nexus
+          context:
+            - aws-development
           repo: $HELM_MASTER_REPOSITORY_URL
           version: 0.0.<< pipeline.number >>
           image-tag: 0.0.<< pipeline.number >>
