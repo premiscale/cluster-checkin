@@ -39,27 +39,35 @@ workflows:
           image-tag-path: .cron.image.tag
           requires:
             - helm lint [helm/cluster-checkin]
-            - docker [cluster-checkin] [develop]
           filters:
             branches:
               ignore:
                 - master
 
+      ##
+
       - slack/on-hold:
           context: slack
+          requires:
+            - docker [cluster-checkin] [develop]
+            - helm build and push [helm/cluster-checkin] [develop]
           filters:
             branches:
-              ignore: /.*/
-            tags:
-              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+              ignore:
+                - master
 
       - request-approval:
+          name: Helm upgrade approval [develop]
+          requires:
+            - docker [cluster-checkin] [develop]
+            - helm build and push [helm/cluster-checkin] [develop]
           type: approval
           filters:
             branches:
-              ignore: /.*/
-            tags:
-              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+              ignore:
+                - master
+
+      ##
 
       - general/helm-upgrade:
           name: helm upgrade install [helm/cluster-checkin] [develop]
@@ -70,8 +78,7 @@ workflows:
           additional-values: |
             --set global.image.registry="$DOCKER_DEVELOP_DOMAIN" --set cron.image.pullSecrets[0]=nexus-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
           requires:
-            - helm build and push [helm/cluster-checkin] [develop]
-            - docker [cluster-checkin] [develop]
+            - Helm upgrade approval [develop]
           context:
             - kubeconfig
             - nexus
@@ -113,21 +120,30 @@ workflows:
               only:
                 - master
 
+      ##
+
       - slack/on-hold:
           context: slack
+          requires:
+            - helm build and push [helm/cluster-checkin] [master]
+            - docker [cluster-checkin] [master]
           filters:
             branches:
-              ignore: /.*/
-            tags:
-              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+              only:
+                - master
 
       - request-approval:
+          name: Helm upgrade approval [master]
           type: approval
+          requires:
+            - helm build and push [helm/cluster-checkin] [master]
+            - docker [cluster-checkin] [master]
           filters:
             branches:
-              ignore: /.*/
-            tags:
-              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+              only:
+                - master
+
+      ##
 
       - general/helm-upgrade:
           name: helm upgrade install [helm/cluster-checkin] [master]
@@ -138,8 +154,7 @@ workflows:
           additional-values: |
             --set global.image.registry="$DOCKER_MASTER_DOMAIN" --set cron.image.pullSecrets[0]=nexus-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
           requires:
-            - helm build and push [helm/cluster-checkin] [master]
-            - docker [cluster-checkin] [master]
+            - Helm upgrade approval [master]
           context:
             - kubeconfig
             - nexus
