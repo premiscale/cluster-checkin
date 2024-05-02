@@ -81,6 +81,7 @@ workflows:
           name: helm build and push [helm/cluster-checkin] [tag]
           context:
             - aws-development
+          chart-name-postfix: chart
           version: $CIRCLE_TAG
           image-tag: $CIRCLE_TAG
           image-tag-path: .cron.image.tag
