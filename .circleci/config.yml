@@ -5,7 +5,7 @@ setup: true
 
 orbs:
   dynamic: bjd2385/dynamic-continuation@3.8.1
-  general: premiscale/general@dev:31c8539771afb5505ef3258f78ea9b448bb7ae1b
+  general: premiscale/general@dev:ce11aaf426a2f8cc068a7d08459b0e74216f7540
   slack: circleci/slack@4.13.2
 
 
@@ -92,13 +92,34 @@ workflows:
             tags:
               only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
 
+      - slack/on-hold:
+          context: slack
+          requires:
+            - helm build and push [helm/cluster-checkin] [tag]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+
+      - request-approval:
+          name: Helm upgrade approval
+          type: approval
+          requires:
+            - helm build and push [helm/cluster-checkin] [tag]
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+
       - general/helm-upgrade:
           name: helm upgrade install [helm/cluster-checkin] [tag]
           cluster: $CHELSEA_CLUSTER
           namespace: crons
           repo: $HELM_REPOSITORY_URL
           additional-values: |
-            --set global.image.registry="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/release" --set cron.image.pullSecrets[0]=ecr-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
+            --set global.image.registry="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/$CIRCLE_PROJECT" --set cron.image.pullSecrets[0]=ecr-docker-registry --set cron.env[0].name=CLUSTER_ID,cron.env[0].value="$LOFT_CHELSEA_CLUSTER_ID"
           requires:
             - helm build and push [helm/cluster-checkin] [tag]
             - docker [cluster-checkin] [tag]

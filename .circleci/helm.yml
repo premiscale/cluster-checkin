@@ -2,7 +2,8 @@ version: 2.1
 
 
 orbs:
-  general: premiscale/general@dev:31c8539771afb5505ef3258f78ea9b448bb7ae1b
+  general: premiscale/general@dev:ce11aaf426a2f8cc068a7d08459b0e74216f7540
+  slack: circleci/slack@4.13.2
 
 
 workflows:
@@ -43,6 +44,22 @@ workflows:
             branches:
               ignore:
                 - master
+
+      - slack/on-hold:
+          context: slack
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+
+      - request-approval:
+          type: approval
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
 
       - general/helm-upgrade:
           name: helm upgrade install [helm/cluster-checkin] [develop]
@@ -95,6 +112,22 @@ workflows:
             branches:
               only:
                 - master
+
+      - slack/on-hold:
+          context: slack
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+
+      - request-approval:
+          type: approval
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
 
       - general/helm-upgrade:
           name: helm upgrade install [helm/cluster-checkin] [master]
