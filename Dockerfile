@@ -1,5 +1,5 @@
 ARG IMAGE=ubuntu
-ARG TAG=22.04
+ARG TAG=26.04
 
 FROM ${IMAGE}:${TAG}
 
